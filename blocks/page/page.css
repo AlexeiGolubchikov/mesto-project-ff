@@ -1,6 +1,17 @@
-@import url('./__content/page__content.css');
-@import url('./__section/page__section.css');
-
 .page {
-  background: #000;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    background: #000000;
+    max-width: 880px;
+    margin: 0 auto;
+    font-family: 'Inter', 'Arial', 'Helvetica', sans-serif;
+    font-style: normal;
+    color: #000;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
 }
