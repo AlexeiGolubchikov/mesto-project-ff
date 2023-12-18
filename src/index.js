@@ -1,3 +1,4 @@
+import '../pages/index.css';
 import {initialCards} from "./constants.js";
 import {createCard} from "./components/Card.js";
 import { openPopup, closePopup } from "./components/modal.js";

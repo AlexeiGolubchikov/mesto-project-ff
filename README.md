@@ -6,4 +6,4 @@ Alt-H1
 
 Макет для данной работы был загружен из графического редактора Figma.
 
-[Ссылка на проект](https://AlexeiGolubchikov.github.io/mesto/index.html)
+[Ссылка на проект](https://AlexeiGolubchikov.github.io/mesto-project-ff/index.html)
