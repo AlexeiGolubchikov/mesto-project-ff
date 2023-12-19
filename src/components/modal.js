@@ -1,4 +1,18 @@
-import { closePopupPressEscape } from "../index.js";
+//функция закрытия модального окна через нажатие на клавишу Escape
+function closePopupPressEscape(evt) {
+    if (evt.key === "Escape") {
+      const openedPopup = document.querySelector('.popup_opened');
+      closePopup(openedPopup);
+    };
+  };
+
+//функция закрытия модального окна через крестик или через клик на оверлей
+const closePopupByClick = evt => {
+    if (evt.target.classList.contains('popup_opened') || evt.target.classList.contains('popup__close')) { 
+       closePopup(evt.currentTarget); 
+     }; 
+};
+
 //функция открытия модального окна
 function openPopup(popup) {
     popup.classList.add('popup_opened');
@@ -11,4 +25,4 @@ function closePopup(popup) {
     document.removeEventListener('keydown', closePopupPressEscape);
 };
 
-export {openPopup, closePopup};
+export {openPopup, closePopup, closePopupByClick};
