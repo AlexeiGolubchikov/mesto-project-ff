@@ -3,7 +3,7 @@ import {initialCards, validationConfig} from "./constants.js";
 import {createCard, deleteCardEventListener, likeCardEventListener} from "./components/Card.js";
 import { openPopup, closePopup,closePopupByClick } from "./components/modal.js";
 import { enableValidation } from "./validation.js" ;
-//import { getInitialCards } from './api.js';
+import { getInitialCards, getUserData } from './components/api.js';
 const buttonEditProfile = document.querySelector('.profile__edit-button');
 const buttonAddCard = document.querySelector('.profile__add-button');
 const buttonEditAvatar = document.querySelector('.profile__avatar');
@@ -78,10 +78,10 @@ export function showImage(name, link) {
   openPopup(popupImageOfCard);
 }
 
-initialCards.forEach(function(item) {
-  const card = createCard(item, deleteCardEventListener, likeCardEventListener, showImage)
-  cards.append(card)
-});
+//initialCards.forEach(function(item) {
+//  const card = createCard(item, deleteCardEventListener, likeCardEventListener, showImage)
+//  cards.append(card)
+//});
 
 //добавление новой карточки
 function addCard(evt) {
@@ -97,3 +97,25 @@ function addCard(evt) {
 formAddCard.addEventListener('submit', addCard);
 
 enableValidation(validationConfig);
+
+getUserData()
+  .then((result) => {
+    buttonEditAvatar.src = result.avatar;
+    profileName.textContent = result.name;
+    profileJob.textContent = result.about;
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+getInitialCards()
+  .then((result) => {
+    result.forEach(function(item) {
+      const card = createCard(item, deleteCardEventListener, likeCardEventListener, showImage)
+      cards.append(card)
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  }); 
+
