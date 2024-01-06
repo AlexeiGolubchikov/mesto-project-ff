@@ -1,0 +1,6 @@
+.profile__avatar-area {
+    position: relative;
+    height: 120px;
+    width: 120px;
+    z-index: 0;
+}

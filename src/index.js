@@ -1,11 +1,15 @@
 import '../pages/index.css';
-import {initialCards} from "./constants.js";
+import {initialCards, validationConfig} from "./constants.js";
 import {createCard, deleteCardEventListener, likeCardEventListener} from "./components/Card.js";
 import { openPopup, closePopup,closePopupByClick } from "./components/modal.js";
+import { enableValidation } from "./validation.js" ;
+//import { getInitialCards } from './api.js';
 const buttonEditProfile = document.querySelector('.profile__edit-button');
 const buttonAddCard = document.querySelector('.profile__add-button');
+const buttonEditAvatar = document.querySelector('.profile__avatar');
 const popupEditProfile = document.querySelector('.popup_type_edit');
 const popupAddCard = document.querySelector('.popup_type_add');
+const popupEditAvatar = document.querySelector('.popup_type_edit-avatar');
 const popupImageOfCard = document.querySelector('.popup_type_image');
 const captionPopupImage = document.querySelector('.popup__caption');
 const popupCard = document.querySelector('.popup__image');
@@ -14,6 +18,8 @@ const profileJob = document.querySelector('.profile__job');
 export const cards = document.querySelector('.elements');
 const formEditProfile = document.forms.editProfile;
 const formAddCard = document.forms.addCard;
+const formEditAvatar = document.forms.editAvatar;
+const formEditUrlAvatar = formEditAvatar.elements.addLinkAvatar;
 const formEditName = formEditProfile.elements.name;
 const formEditJob = formEditProfile.elements.job;
 const formAddTitleCard = formAddCard.elements.addTitleCard;
@@ -39,6 +45,21 @@ buttonEditProfile.addEventListener('click', () => {
 buttonAddCard.addEventListener('click', () => {
   openPopup(popupAddCard);
 });
+
+//открытие формы редактирования аватара
+buttonEditAvatar.addEventListener('click', () => {
+  openPopup(popupEditAvatar);
+});
+
+//функция изменения аватара пользователя
+function saveNewAvatar(evt) {
+  evt.preventDefault();
+  const imageAvatar = document.querySelector('.profile__avatar');
+  imageAvatar.src = formEditUrlAvatar.value;
+  closePopup(popupEditAvatar);
+  formEditAvatar.reset();
+}
+formEditAvatar.addEventListener('submit', saveNewAvatar);
 
 //сохранение введенных данных в форму редактирования профиля
 function saveNewDataProfile(evt) {
@@ -74,3 +95,5 @@ function addCard(evt) {
   formAddCard.reset();
 }
 formAddCard.addEventListener('submit', addCard);
+
+enableValidation(validationConfig);
