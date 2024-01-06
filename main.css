@@ -5,8 +5,7 @@
 .header__logo{height:33px;width:142px}@media screen and (max-width:934px){.header__logo{height:24.4px;margin:0 auto 0 27px;width:103.74px}}
 .content{flex:1;margin:0 auto;width:100%}@media screen and (max-width:934px){.content{width:calc(100% - 38px)}}
 .profile{align-items:center;color:#fff;-moz-column-gap:30px;column-gap:30px;display:grid;grid-template-columns:120px max-content 1fr;justify-items:end;margin:0 auto 50px;width:100%}@media screen and (max-width:767px){.profile{grid-template-columns:repeat(1,minmax(282px,1fr));justify-items:center;margin-bottom:36px}}
-.profile__avatar{border-radius:50%;height:120px;margin:0;-o-object-fit:cover;object-fit:cover;width:120px};
-.profile__edit-avatar{background-image:url(images/profile-edit-avatar.a086f758840ae814ecde.svg);height:26px;padding:0;width:26px};
+.profile__avatar{background-image:url(images/avatar.769192cd65d9c9666155.jpg);border-radius:50%;display:block;height:120px;margin:0;-o-object-fit:cover;object-fit:cover;position:relative;width:120px;z-index:2}.profile__avatar:hover{cursor:pointer;opacity:.2}
 .profile__name{font-size:42px;font-weight:500;line-height:1.14;margin:0;max-width:294px;overflow:hidden;padding:0;text-overflow:ellipsis;white-space:nowrap}@media screen and (max-width:767px){.profile__name{font-size:27px;line-height:33px;margin:25.25px 0 7px 24px;text-align:center;width:189px}}
 .profile__job{font-size:18px;font-weight:400;line-height:22px;margin:0;max-width:336px;overflow:hidden;padding:0;text-overflow:ellipsis;white-space:nowrap}@media screen and (max-width:767px){.profile__job{font-size:14px;line-height:17px;margin:auto;text-align:center;width:282px}}
 .profile__info{display:flex;flex-direction:column;justify-content:center}
@@ -41,4 +40,6 @@
 .form__button_inactive{background:#e5e5e5;border:1px solid #000;color:#000;opacity:.2}
 .input-error{color:red;font-size:12px;font-weight:400;line-height:15px;margin:5px 0 0;min-height:35px;padding:0}
 .input-error_active{display:block}
+.profile__edit{height:26px;left:47px;margin:0;opacity:1;padding:0;position:absolute;top:47px;width:26px;z-index:1}
+.profile__avatar-area{height:120px;position:relative;width:120px;z-index:0}
 
