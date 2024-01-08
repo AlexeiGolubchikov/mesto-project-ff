@@ -7,22 +7,20 @@ function closePopupPressEscape(evt) {
   };
 
 //функция закрытия модального окна через крестик или через клик на оверлей
-const closePopupByClick = evt => {
+export const closePopupByClick = evt => {
     if (evt.target.classList.contains('popup_opened') || evt.target.classList.contains('popup__close')) { 
        closePopup(evt.currentTarget); 
      }; 
 };
 
 //функция открытия модального окна
-function openPopup(popup) {
+export function openPopup(popup) {
     popup.classList.add('popup_opened');
     document.addEventListener('keydown', closePopupPressEscape);
 };
   
 //функция закрытия модального окна
-function closePopup(popup) {
+export function closePopup(popup) {
     popup.classList.remove('popup_opened');
     document.removeEventListener('keydown', closePopupPressEscape);
 };
-
-export {openPopup, closePopup, closePopupByClick};

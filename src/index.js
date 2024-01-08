@@ -1,29 +1,14 @@
 import '../pages/index.css';
-import {initialCards, validationConfig} from "./constants.js";
-import {createCard, deleteCardEventListener, likeCardEventListener} from "./components/Card.js";
+import { createCard, deleteCard, toggleLikeButton } from "./components/Card.js";
 import { openPopup, closePopup,closePopupByClick } from "./components/modal.js";
 import { enableValidation } from "./validation.js" ;
-import { getInitialCards, getUserData } from './components/api.js';
-const buttonEditProfile = document.querySelector('.profile__edit-button');
-const buttonAddCard = document.querySelector('.profile__add-button');
-const buttonEditAvatar = document.querySelector('.profile__avatar');
-const popupEditProfile = document.querySelector('.popup_type_edit');
-const popupAddCard = document.querySelector('.popup_type_add');
-const popupEditAvatar = document.querySelector('.popup_type_edit-avatar');
-const popupImageOfCard = document.querySelector('.popup_type_image');
-const captionPopupImage = document.querySelector('.popup__caption');
-const popupCard = document.querySelector('.popup__image');
-const profileName = document.querySelector('.profile__name');
-const profileJob = document.querySelector('.profile__job');
-export const cards = document.querySelector('.elements');
-const formEditProfile = document.forms.editProfile;
-const formAddCard = document.forms.addCard;
-const formEditAvatar = document.forms.editAvatar;
-const formEditUrlAvatar = formEditAvatar.elements.addLinkAvatar;
-const formEditName = formEditProfile.elements.name;
-const formEditJob = formEditProfile.elements.job;
-const formAddTitleCard = formAddCard.elements.addTitleCard;
-const formAddLinkCard = formAddCard.elements.addLinkCard;
+import { editUserData, getInitialCards, getUserData, postNewCard, updateAvatar } from './components/api.js';
+import {
+  validationConfig, buttonEditProfile, buttonAddCard, buttonEditAvatar, popupEditProfile, popupAddCard, 
+  popupEditAvatar, popupImageOfCard, captionPopupImage, popupCard, profileName, profileJob, cards, formEditProfile, 
+  formAddCard, formEditAvatar, formEditUrlAvatar, formEditName, formEditJob, formAddTitleCard, formAddLinkCard
+} from "./constants.js";
+let profileId;
 
 //закрытие модального окна через крестик или через клик на оверлей
 const popups = document.querySelectorAll('.popup');
@@ -32,7 +17,6 @@ popups.forEach((popup) => {
     closePopupByClick(evt);
   });
 });
-
 
 //открытие формы редактирования профиля
 buttonEditProfile.addEventListener('click', () => {
@@ -46,27 +30,14 @@ buttonAddCard.addEventListener('click', () => {
   openPopup(popupAddCard);
 });
 
-//открытие формы редактирования аватара
-buttonEditAvatar.addEventListener('click', () => {
-  openPopup(popupEditAvatar);
-});
-
-//функция изменения аватара пользователя
-function saveNewAvatar(evt) {
-  evt.preventDefault();
-  const imageAvatar = document.querySelector('.profile__avatar');
-  imageAvatar.src = formEditUrlAvatar.value;
-  closePopup(popupEditAvatar);
-  formEditAvatar.reset();
-}
-formEditAvatar.addEventListener('submit', saveNewAvatar);
-
 //сохранение введенных данных в форму редактирования профиля
 function saveNewDataProfile(evt) {
     evt.preventDefault();
+    renderLoading(true, formEditProfile);
     profileName.textContent = formEditName.value;
     profileJob.textContent = formEditJob.value;
     closePopup(popupEditProfile);
+    editUserData(formEditName, formEditJob, formEditProfile);
 };
 formEditProfile.addEventListener('submit', saveNewDataProfile);
 
@@ -76,45 +47,67 @@ export function showImage(name, link) {
   popupCard.src = link;
   popupCard.alt = name;
   openPopup(popupImageOfCard);
-}
+};
 
-//initialCards.forEach(function(item) {
-//  const card = createCard(item, deleteCardEventListener, likeCardEventListener, showImage)
-//  cards.append(card)
-//});
+//функция процесса загрузки
+export function renderLoading(isLoading, form) {
+  const buttonSave = form.querySelector('.form__button');
+  if (isLoading) {
+    buttonSave.textContent = 'Сохранение...';
+  } else {
+    buttonSave.textContent = 'Сохранить';
+  };
+};
 
-//добавление новой карточки
+//функция добавления новой карточки
 function addCard(evt) {
   evt.preventDefault();
+  renderLoading(true, formAddCard);
   const cardData = {
+    likes: [],
     name: formAddTitleCard.value,
-    link: formAddLinkCard.value
+    link: formAddLinkCard.value,
+    owner: {
+      _id: profileId
+    }
   };
-  createCard(cardData, deleteCardEventListener, likeCardEventListener, showImage)
+  postNewCard(formAddTitleCard, formAddLinkCard, formAddCard);
+  createCard(cardData, deleteCard, showImage, profileId, toggleLikeButton);
   closePopup(popupAddCard);
   formAddCard.reset();
-}
+};
 formAddCard.addEventListener('submit', addCard);
 
 enableValidation(validationConfig);
 
-getUserData()
-  .then((result) => {
-    buttonEditAvatar.src = result.avatar;
-    profileName.textContent = result.name;
-    profileJob.textContent = result.about;
-  })
-  .catch((err) => {
-    console.log(err);
-  });
 
-getInitialCards()
-  .then((result) => {
-    result.forEach(function(item) {
-      const card = createCard(item, deleteCardEventListener, likeCardEventListener, showImage)
-      cards.append(card)
+Promise.all([getUserData(),getInitialCards()])
+  .then(([userData, initialCards]) => {
+    profileId = userData._id;
+    profileName.textContent = userData.name;
+    profileJob.textContent = userData.about;
+    buttonEditAvatar.src = userData.avatar;
+    initialCards.forEach(function(item) {
+      const card = createCard(item, deleteCard, showImage, profileId, toggleLikeButton);
+      cards.append(card);
     });
   })
-  .catch((err) => {
-    console.log(err);
-  });
+  .catch((err) =>
+    console.log(err)
+  );
+
+  //открытие формы редактирования аватара
+buttonEditAvatar.addEventListener('click', () => {
+  openPopup(popupEditAvatar);
+});
+
+//функция изменения аватара пользователя
+function saveNewAvatar(evt) {
+  evt.preventDefault();
+  renderLoading(true, formEditAvatar)
+  buttonEditAvatar.src = formEditUrlAvatar.value;
+  updateAvatar(formEditUrlAvatar, formEditAvatar);
+  closePopup(popupEditAvatar);
+  formEditAvatar.reset();
+};
+formEditAvatar.addEventListener('submit', saveNewAvatar);
