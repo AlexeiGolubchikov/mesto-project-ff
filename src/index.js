@@ -30,14 +30,22 @@ buttonAddCard.addEventListener('click', () => {
   openPopup(popupAddCard);
 });
 
-//сохранение введенных данных в форму редактирования профиля
+//сохранение введенных данных профиля
 function saveNewDataProfile(evt) {
     evt.preventDefault();
     renderLoading(true, formEditProfile);
-    profileName.textContent = formEditName.value;
-    profileJob.textContent = formEditJob.value;
-    closePopup(popupEditProfile);
-    editUserData(formEditName, formEditJob, formEditProfile);
+    editUserData(formEditName.value, formEditJob.value)
+      .then((userData) => {
+        profileName.textContent = userData.name;
+        profileJob.textContent = userData.about;
+        closePopup(popupEditProfile);
+      })
+      .catch((err) =>
+            console.log(err)
+      )
+      .finally(() => {
+        renderLoading(false, formEditProfile);
+      });
 };
 formEditProfile.addEventListener('submit', saveNewDataProfile);
 
@@ -49,30 +57,26 @@ export function showImage(name, link) {
   openPopup(popupImageOfCard);
 };
 
-//функция процесса загрузки
+//функция уведомления пользователя о процессе загрузки
 export function renderLoading(isLoading, form) {
   const buttonSave = form.querySelector('.form__button');
-  if (isLoading) {
-    buttonSave.textContent = 'Сохранение...';
-  } else {
-    buttonSave.textContent = 'Сохранить';
-  };
+  buttonSave.textContent = isLoading ? 'Сохранение...' : 'Сохранить';
 };
 
 //функция добавления новой карточки
 function addCard(evt) {
   evt.preventDefault();
   renderLoading(true, formAddCard);
-  const cardData = {
-    likes: [],
-    name: formAddTitleCard.value,
-    link: formAddLinkCard.value,
-    owner: {
-      _id: profileId
-    }
-  };
-  postNewCard(formAddTitleCard, formAddLinkCard, formAddCard);
-  createCard(cardData, deleteCard, showImage, profileId, toggleLikeButton);
+  postNewCard(formAddTitleCard.value, formAddLinkCard.value)
+    .then((cardData) => {
+      cards.prepend(createCard(cardData, deleteCard, showImage, profileId, toggleLikeButton));
+    })
+    .catch((err) =>
+      console.log(err)
+    )
+    .finally(() => {
+      renderLoading(false, formAddCard);
+    });
   closePopup(popupAddCard);
   formAddCard.reset();
 };
@@ -105,8 +109,16 @@ buttonEditAvatar.addEventListener('click', () => {
 function saveNewAvatar(evt) {
   evt.preventDefault();
   renderLoading(true, formEditAvatar)
-  buttonEditAvatar.src = formEditUrlAvatar.value;
-  updateAvatar(formEditUrlAvatar, formEditAvatar);
+  updateAvatar(formEditUrlAvatar.value)
+    .then((userData) => {
+      buttonEditAvatar.src = userData.avatar;
+    })
+    .catch((err) =>
+      console.log(err)
+    )
+    .finally(() => {
+      renderLoading(false, formEditAvatar);
+    });
   closePopup(popupEditAvatar);
   formEditAvatar.reset();
 };

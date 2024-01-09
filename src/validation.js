@@ -18,7 +18,7 @@ const hideInputError = (formEditProfile, formEditName, settings) => {
     formEditNameError.textContent = '';
 };
 
-const isValid = (formEditProfile, formEditName, settings) => {
+const toggleInputErrorState = (formEditProfile, formEditName, settings) => {
     if (formEditName.validity.patternMismatch) {
         formEditName.setCustomValidity(formEditName.dataset.errorMessage);
     } else {
@@ -55,7 +55,7 @@ const setEventListeners = (formEditProfile, settings) => {
     inputList.forEach((inputElement) => {
         inputElement.addEventListener('input', () => {
             toggleButtonState(inputList, buttonElement, settings);
-            isValid(formEditProfile, inputElement, settings);
+            toggleInputErrorState(formEditProfile, inputElement, settings);
         });
     });
     toggleButtonState(inputList, buttonElement, settings);

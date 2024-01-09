@@ -1,5 +1,4 @@
-import { cards } from "../constants.js";
-import { deleteNewCard, deleteLikeCard, putLikeCard } from "./api.js";
+import { deleteMyCard, deleteLikeCard, putLikeCard } from "./api.js";
 
 //функция обработчика лайка
 export function toggleLikeButton(evt) {
@@ -7,7 +6,7 @@ export function toggleLikeButton(evt) {
 };
 
 //функция определения лайка пользователя
-function likeUser(item, profileId) {
+function isLikedByUser(item, profileId) {
   return item.likes.some((item) => item._id === profileId);
 };
 
@@ -17,12 +16,12 @@ export function deleteCard(evt) {
   item.remove();
 };
 
-//счетчик количества лайков
-function countLike(element, item) {
+//функция заполнения количества лайков
+function fillLikesCount(element, item) {
   element.textContent = item.likes.length;
 };
 
-//функция создания карточки при загрузке страницы
+//функция создания карточки
 export function createCard(item, deleteCard, showImage, profileId, toggleLikeButton) {
   const elementTemplate = document.querySelector('#element-template').content;
   const cardElement = elementTemplate.querySelector('.element').cloneNode(true);
@@ -30,40 +29,39 @@ export function createCard(item, deleteCard, showImage, profileId, toggleLikeBut
   const buttonLike = cardElement.querySelector('.element__like');
   const sumLike = cardElement.querySelector('.element__like-count');
   const buttonDeleteCard = cardElement.querySelector('.element__delete');
-  countLike(sumLike, item);
+  fillLikesCount(sumLike, item);
   cardElement.querySelector('.element__title').textContent = item.name;
   imageCardElement.src = item.link;
   imageCardElement.alt = item.name;
-  cards.prepend(cardElement);
-  
-  if ((likeUser(item, profileId))) {
-    buttonLike.classList.add('element__like_active');
-  } else {
-    buttonLike.classList.remove('element__like_active');
-  }
 
+  if ((isLikedByUser(item, profileId))) {
+    buttonLike.classList.add('element__like_active');
+  };
+  
   cardElement.querySelector('.element__like').addEventListener('click', (evt) => {
-    if (likeUser(item, profileId)) {
-      toggleLikeButton(evt);
-      deleteLikeCard(item._id)
-        .then((item) => {
-          countLike(sumLike, item)
-        });
-    } else {
-      toggleLikeButton(evt);
-      putLikeCard(item._id)
-        .then((item) => {
-          countLike(sumLike, item)
-        });
-    };
+    const isLiked = (buttonLike.classList.contains('element__like_active')) ? true : false;
+    const likeMethod = isLiked ? deleteLikeCard : putLikeCard;
+    likeMethod(item._id)
+      .then((item) => {
+        toggleLikeButton(evt);
+        fillLikesCount(sumLike, item);
+      })
+      .catch((err) => 
+        console.log(err)
+      );
   });
-      
+  
   if (profileId !== item.owner._id) {
     buttonDeleteCard.remove();
   } else {
     buttonDeleteCard.addEventListener("click", (evt) => {
-      deleteNewCard(item._id);
-      deleteCard(evt);
+      deleteMyCard(item._id)
+        .then(() => {
+          deleteCard(evt);
+        })
+        .catch((err) =>
+          console.log(err)
+        );
     });
   };
   
